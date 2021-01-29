@@ -33,7 +33,7 @@ fun main(vararg args: String) {
         jCommander.parse(*args)
     }
 
-    val bruhAmount = arguments.amount
+    val bruhAmount = arguments.amount ?: error("The amount of bruhs is required!")
     var i = BigInteger.ONE
 
     while (true) {
@@ -61,9 +61,14 @@ class Arguments {
         description = "Amount of bruhs",
         converter = BigIntegerConverter::class
     )
-    var amount = Files.readAllBytes(userResource("amount.txt"))
-        .toString(charset = Charset.defaultCharset())
-        .toBigInteger()
+    var amount = try {
+        Files.readAllBytes(userResource("amount.txt"))
+            .toString(charset = Charset.defaultCharset())
+            .toBigInteger()
+    } catch (exception: NoSuchFileException) {
+        null
+    }
+
 }
 
 class BooleanConverter : IStringConverter<Boolean> {
